@@ -1,0 +1,3 @@
+[submodule "bible_data"]
+	path = bible_data
+	url = https://github.com/scrollmapper/bible_databases.git
