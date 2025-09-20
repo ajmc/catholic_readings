@@ -1,9 +1,20 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pathlib import Path
 from datetime import date
 import json
 
 app = FastAPI()
+
+BASE_DIR = Path(__file__).parent
+
+@app.get("/")
+def get_index():
+    return FileResponse(BASE_DIR / "static" / "index.html")
+
+#Serve the static frontend
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # -----------------------------
 # Load Ordo
