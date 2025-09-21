@@ -1,0 +1,144 @@
+:root{
+  --bg:#ffffff;
+  --text:#000000;
+  --card-bg:#f9f9f9;
+  --card-border:#ddd;
+  --muted:#666;
+}
+[data-theme="dark"]{
+  --bg:#0e0e0e;
+  --text:#f5f5f5;
+  --card-bg:#161616;
+  --card-border:#2b2b2b;
+  --muted:#999;
+}
+
+/* Layout */
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  margin:0;
+  padding:2rem;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:1rem;
+  margin-bottom:1.25rem;
+}
+
+h1{
+  margin:0;
+  font-size:1.5rem;
+  font-weight:600;
+}
+
+.toggle-container{ text-align:right; }
+
+.btn {
+  background: none;
+  border:1px solid var(--text);
+  color:var(--text);
+  padding:0.5rem 0.9rem;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:0.95rem;
+}
+.btn:hover { opacity:0.9; }
+
+/* Cards */
+.ordo-entry{
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  border-radius:10px;
+  padding:1rem 1.15rem;
+  margin-bottom:1rem;
+  box-shadow: 0 6px 18px rgba(3,3,3,0.04);
+}
+
+.entry-row{
+  display:flex;
+  gap:1rem;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.title-and-meta{
+  flex:1 1 320px;
+  min-width:220px;
+}
+
+.entry-title{
+  margin:0 0 0.25rem 0;
+  font-size:1.15rem;
+  font-weight:700;
+  letter-spacing: -0.2px;
+}
+
+.meta{
+  margin:0;
+  font-size:0.95rem;
+  color:var(--muted);
+}
+
+.chips{
+  display:flex;
+  gap:0.5rem;
+  flex-wrap:wrap;
+  margin-top:0.4rem;
+}
+
+.chip{
+  background:transparent;
+  border:1px solid var(--card-border);
+  padding:0.2rem 0.45rem;
+  border-radius:999px;
+  font-size:0.85rem;
+  color:var(--muted);
+}
+
+/* cycles list */
+.cycles{
+  min-width:220px;
+  border-left:1px dashed var(--card-border);
+  padding-left:1rem;
+  margin-left:1rem;
+  font-size:0.95rem;
+  color:var(--muted);
+}
+.cycles strong{ color:var(--text); font-weight:600; }
+
+/* Color swatches */
+.color-list{
+  display:flex;
+  gap:0.5rem;
+  align-items:center;
+  margin-top:0.3rem;
+  flex-wrap:wrap;
+}
+
+.swatch{
+  width:22px;
+  height:22px;
+  border-radius:4px;
+  border:1px solid rgba(0,0,0,0.12);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.1) inset;
+}
+
+.swatch-label{
+  font-size:0.9rem;
+  color:var(--muted);
+  margin-left:0.35rem;
+}
+
+/* Responsive */
+@media (max-width:720px){
+  .entry-row { flex-direction:column; align-items:flex-start; }
+  .cycles { border-left:none; padding-left:0; margin-left:0; width:100%; }
+}
+

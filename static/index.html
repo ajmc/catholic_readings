@@ -1,165 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ordo Today</title>
-  <style>
-    :root {
-      --bg-color: #ffffff;
-      --text-color: #000000;
-    }
-
-    [data-theme="dark"] {
-      --bg-color: #121212;
-      --text-color: #f0f0f0;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 2rem;
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    .toggle-container {
-      text-align: right;
-      margin-bottom: 1rem;
-    }
-
-    button {
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      border: 1px solid var(--text-color);
-      background: none;
-      color: var(--text-color);
-      border-radius: 5px;
-      font-size: 1rem;
-    }
-
-    h1 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .ordo-entry {
-      border-bottom: 1px solid #ccc;
-      padding: 1rem 0;
-    }
-
-    .ordo-entry:last-child {
-      border-bottom: none;
-    }
-
-    .ordo-entry h2 {
-      margin: 0 0 0.5rem 0;
-      font-size: 1.2rem;
-    }
-
-    .ordo-entry p {
-      margin: 0.2rem 0;
-    }
-
-    details summary {
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    details {
-      margin-left: 1rem;
-      margin-top: 0.2rem;
-    }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Today's Catholic Feast & Calendar</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <div class="toggle-container">
-    <button id="toggleTheme">Toggle Dark Mode</button>
-  </div> 
+  <div class="topbar">
+    <h1>Today's Catholic Feast & Calendar</h1>
+    <div class="toggle-container">
+      <button id="toggleTheme" class="btn">Toggle Dark Mode</button>
+    </div>
+  </div>
 
-  <h1>Ordo Today</h1>
-  <div id="ordoContainer">Loading...</div>
+  <div id="ordoContainer">Loading…</div>
 
-  <script>
-    const ordoContainer = document.getElementById('ordoContainer');
-    const toggleThemeBtn = document.getElementById('toggleTheme');
-
-    function createTree(obj, isTopLevel = false) {
-      if (typeof obj !== 'object' || obj === null) {
-        return document.createTextNode(obj);
-      }
-
-      if (Array.isArray(obj)) {
-        const container = document.createElement('div');
-        obj.forEach((item, index) => {
-          const detail = document.createElement('details');
-          detail.open = isTopLevel; // auto-expand top-level array items
-          const summary = document.createElement('summary');
-          summary.textContent = `[${index}]`;
-          detail.appendChild(summary);
-          detail.appendChild(createTree(item));
-          container.appendChild(detail);
-        });
-        return container;
-      }
-
-      const container = document.createElement('div');
-      Object.entries(obj).forEach(([key, value]) => {
-        const detail = document.createElement('details');
-        detail.open = isTopLevel; // auto-expand top-level object fields
-        const summary = document.createElement('summary');
-        summary.textContent = key;
-        detail.appendChild(summary);
-        // nested levels are collapsed by default
-        detail.appendChild(createTree(value, false));
-        container.appendChild(detail);
-      });
-      return container;
-    }
-
-    async function fetchOrdoToday() {
-      try {
-        const response = await fetch('/ordo/today');
-        const data = await response.json();
-
-        if (data.length === 0) {
-          ordoContainer.innerHTML = '<p>No entries for today.</p>';
-          return;
-        }
-
-        ordoContainer.innerHTML = '';
-        data.forEach(entry => {
-          const div = document.createElement('div');
-          div.className = 'ordo-entry';
-
-          const h2 = document.createElement('h2');
-          h2.textContent = entry.id.replace(/_/g, ' ');
-          div.appendChild(h2);
-
-          // top-level fields auto-expanded
-          const tree = createTree(entry, true);
-          div.appendChild(tree);
-
-          ordoContainer.appendChild(div);
-        });
-
-      } catch (error) {
-        console.error('Error fetching ordo:', error);
-        ordoContainer.innerHTML = '<p>Error loading entries.</p>';
-      }
-    }
-
-    fetchOrdoToday();
-
-    toggleThemeBtn.addEventListener('click', () => {
-      if (document.documentElement.getAttribute('data-theme') === 'dark') {
-        document.documentElement.removeAttribute('data-theme');
-      } else {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      }
-    });
-  </script>
+  <script src="/static/main.js"></script>
 </body>
 </html>
 
