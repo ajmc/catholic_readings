@@ -1,8 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pathlib import Path
-from datetime import date
+from datetime import date, timedelta
 import json
 
 app = FastAPI()
@@ -55,12 +55,73 @@ vulg_clementine_bible = load_bible(VULG_CLEMENTINE_PATH)
 # -----------------------------
 # Ordo endpoints
 # -----------------------------
+# -----------------------------
+# Helper: Ordo lookup by date
+# -----------------------------
+def get_entries_for_date(date_str: str):
+    """
+    Returns the ordo entries for a given date string (YYYY-MM-DD).
+    Accepts either the romcal dict (date -> [entries]) or a list of entries
+    where each entry has a 'date' field.
+    """
+    # validate date format
+    try:
+        _ = date.fromisoformat(date_str)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Date must be YYYY-MM-DD")
+
+    # romcal as dict (fast lookup)
+    if isinstance(ordo_entries, dict):
+        return ordo_entries.get(date_str, [])
+
+    # romcal as list (fallback)
+    if isinstance(ordo_entries, list):
+        return [entry for entry in ordo_entries if entry.get("date") == date_str]
+
+    # unexpected format
+    return []
+
+# -----------------------------
+# Ordo endpoints
+# -----------------------------
 @app.get("/ordo/today")
 def get_ordo_today():
+    """Return ordo entries for today (YYYY-MM-DD)"""
     today_str = date.today().isoformat()
-    # Corrected: ordo_entries is a dict keyed by date
-    todays_entries = ordo_entries.get(today_str, [])
-    return todays_entries
+    return get_entries_for_date(today_str)
+
+@app.get("/ordo/{date_str}")
+def get_ordo_by_date(date_str: str):
+    """Return ordo entries for a specific date (YYYY-MM-DD)"""
+    return get_entries_for_date(date_str)
+
+@app.get("/ordo/previous/{date_str}")
+def get_ordo_previous(date_str: str):
+    """
+    Return ordo entries for the previous day relative to date_str.
+    Example: /ordo/previous/2025-09-20 -> entries for 2025-09-19
+    """
+    try:
+        d = date.fromisoformat(date_str)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Date must be YYYY-MM-DD")
+
+    prev_date = (d - timedelta(days=1)).isoformat()
+    return get_entries_for_date(prev_date)
+
+@app.get("/ordo/next/{date_str}")
+def get_ordo_next(date_str: str):
+    """
+    Return ordo entries for the next day relative to date_str.
+    Example: /ordo/next/2025-09-20 -> entries for 2025-09-21
+    """
+    try:
+        d = date.fromisoformat(date_str)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Date must be YYYY-MM-DD")
+
+    next_date = (d + timedelta(days=1)).isoformat()
+    return get_entries_for_date(next_date)
 
 # -----------------------------
 # Readings endpoints
